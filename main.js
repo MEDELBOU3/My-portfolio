@@ -1,6 +1,7 @@
 //main.js
 
 import {
+    initLoader,
     initHeroAnimation,
     createMenuTimeline,
     initMagneticElements,
@@ -14,11 +15,15 @@ import {
     initProcessOverlay,
     initGameSection, // <--- Add this import
     initVisionSection,
+    initSidebarNavigator,
+    initTelemetryHUD,
 } from './animations.js';
+import { initAuth } from './firebase-server/auth.js';
 import { initFluid, updateFluidTheme, } from './fluid.js';
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     initFluid();
+    await initLoader();
 
     // =========================================
     // 1. Initialize Lenis Smooth Scroll
@@ -59,6 +64,9 @@ document.addEventListener("DOMContentLoaded", () => {
     initProcessOverlay(); // Process overlay animations
     initGameSection(); // <--- Call the new animation function
     initVisionSection();
+    initSidebarNavigator();
+    initTelemetryHUD();
+    initAuth(); // Initialize Auth independently
     // =========================================
     // 3. Menu Setup
     // =========================================
