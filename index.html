@@ -18,9 +18,332 @@
 </head>
 
 <body>
+    <!-- ========================================= -->
+    <!-- SYSTEM INITIALIZATION LOADER              -->
+    <!-- ========================================= -->
+    <div id="loader-overlay" class="loader-overlay">
+        <div class="loader-grid-bg"></div>
+        <div class="loader-content">
+            <div class="loader-header">
+                <span class="loader-label">System_Boot_Sequence</span>
+                <span class="loader-version">v1.0.4-STABLE</span>
+            </div>
+            <div class="loader-bar-bg">
+                <div id="loader-bar-fill" class="loader-bar-fill"></div>
+            </div>
+            <div class="loader-readout-grid">
+                <div class="readout-item">MEM_ADDR: <span id="load-hex">0x000000</span></div>
+                <div class="readout-item">COORD: <span id="load-coord">[0.0, 0.0]</span></div>
+            </div>
+            <div class="loader-status-container">
+                <span id="loader-status-text" class="loader-status">Initializing Core Modules...</span>
+                <span id="loader-percentage" class="loader-percentage">0%</span>
+            </div>
+        </div>
+        <!-- Shutter Panels for Cinematic Exit -->
+        <div class="shutter shutter-top"></div>
+        <div class="shutter shutter-bottom"></div>
+    </div>
+
+    <!-- ========================================= -->
+    <!-- SIDEBAR NAVIGATION PANEL                  -->
+    <!-- ========================================= -->
+    <aside class="sidebar-panel">
+        <div class="side-progress-container">
+            <div class="side-progress-fill" id="side-progress"></div>
+        </div>
+        <div class="side-info">
+            <span class="side-index" id="side-num">01</span>
+            <span class="side-label" id="side-label">HOME</span>
+        </div>
+    </aside>
+
+    <!-- ========================================= -->
+    <!-- SYSTEM TELEMETRY HUD                      -->
+    <!-- ========================================= -->
+    <div class="system-hud">
+        <div class="hud-item">
+            <span class="hud-label">FPS</span>
+            <span class="hud-value" id="hud-fps">60</span>
+        </div>
+        <div class="hud-item">
+            <span class="hud-label">VIEW</span>
+            <span class="hud-value" id="hud-res">1920×1080</span>
+        </div>
+        <div class="hud-item">
+            <span class="hud-label">VELO</span>
+            <span class="hud-value" id="hud-velo">0.00</span>
+        </div>
+        <div class="hud-item">
+            <span class="hud-label">UPTIME</span>
+            <span class="hud-value" id="hud-uptime">00:00</span>
+        </div>
+        <div class="hud-item">
+            <span class="hud-label">PING</span>
+            <span class="hud-value" id="hud-ping">24ms</span>
+        </div>
+        <div class="hud-status">
+            <div class="status-pulse"></div>
+            <span class="hud-label">SYSTEM_STABLE</span>
+        </div>
+        
+        <div class="hud-controls-group">
+            <button class="hud-expand-btn" id="hud-auth-trigger" aria-label="Identity Vault">
+                <i data-lucide="log-in"></i>
+            </button>
+            <button class="hud-expand-btn" id="hud-coffee-trigger" aria-label="Neural Fuel">
+                <i data-lucide="coffee"></i>
+            </button>
+            <button class="hud-expand-btn" id="hud-bio-trigger" aria-label="Identity Module">
+                <i data-lucide="user"></i>
+            </button>
+            <button class="hud-expand-btn" id="hud-diagnostics-trigger" aria-label="Diagnostics">
+                <i data-lucide="activity"></i>
+            </button>
+            <button class="hud-expand-btn" id="hud-calendar-trigger" aria-label="Schedule">
+                <i data-lucide="calendar"></i>
+            </button>
+            <button class="hud-expand-btn" id="hud-settings-trigger" aria-label="System Settings">
+                <i data-lucide="settings"></i>
+            </button>
+            <button class="hud-expand-btn" id="hud-expand-trigger" aria-label="Expand Telemetry">
+                <i data-lucide="chevron-right"></i>
+            </button>
+        </div>
+
+        <div class="hud-expanded-content" id="hud-expanded-content">
+            <div class="hud-vortex-header">
+                <span class="ao-label">Digital Vortex Feed</span>
+                <a href="https://www.youtube.com/@DigitalVortex203" target="_blank" class="vortex-link">Channel ↗</a>
+            </div>
+            <div class="hud-main-layout">
+                <div class="hud-video-side">
+                    <div class="hud-video-grid">
+                        <!-- Video 1 -->
+                        <div class="hud-video-card video-item" data-yt="zepyWyzPxOQ">
+                            <div class="video-thumb-mini"><img src="https://img.youtube.com/vi/zepyWyzPxOQ/mqdefault.jpg" alt="Video"></div>
+                            <span class="video-tag">LOG_01</span>
+                        </div>
+                        <!-- Video 2 -->
+                        <div class="hud-video-card video-item" data-yt="bE_A5kopyWw">
+                            <div class="video-thumb-mini"><img src="https://img.youtube.com/vi/bE_A5kopyWw/mqdefault.jpg" alt="Video"></div>
+                            <span class="video-tag">LOG_02</span>
+                        </div>
+                        <!--Video 3-->
+                        <div class="hud-video-card video-item" data-yt="H8K67-3CIac">
+                            <div class="video-thumb-mini"><img src="https://img.youtube.com/vi/H8K67-3CIac/mqdefault.jpg" alt="Video"></div>
+                            <span class="video-tag">LOG_03</span>
+                        </div>
+                        <!--Video 4-->
+                        <div class="hud-video-card video-item" data-yt="EY7ggEMSEGI">
+                            <div class="video-thumb-mini"><img src="https://img.youtube.com/vi/EY7ggEMSEGI/mqdefault.jpg" alt="Video"></div>
+                            <span class="video-tag">LOG_04</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="hud-terminal-side">
+                    <div class="terminal-header">
+                        <span class="terminal-tab">System Logs</span>
+                        <span class="terminal-version">v1.0.4-stable</span>
+                    </div>
+                    <div class="hud-resources">
+                        <div class="res-bar-item">
+                            <span class="res-label">CPU_LOAD</span>
+                            <div class="res-bar"><div class="res-fill" id="cpu-fill" style="width: 45%;"></div></div>
+                        </div>
+                        <div class="res-bar-item">
+                            <span class="res-label">MEM_USE</span>
+                            <div class="res-bar"><div class="res-fill" id="mem-fill" style="width: 22%;"></div></div>
+                        </div>
+                    </div>
+                    <div class="terminal-body" id="hud-terminal">
+                        <div class="log-line">> Initializing system modules...</div>
+                        <div class="log-line">> WebGL: r128 active.</div>
+                        <div class="log-line">> GSAP: 3.12.2 active.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- New Settings Panel -->
+        <div class="hud-settings-panel" id="hud-settings-content">
+            <span class="ao-label">System Overrides</span>
+            <div class="settings-grid">
+                <div class="setting-item">
+                    <span class="hud-label">Architectural_Grid</span>
+                    <label class="switch">
+                        <input type="checkbox" checked id="toggle-grid">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <span class="hud-label">Topographic_Noise</span>
+                    <label class="switch">
+                        <input type="checkbox" checked id="toggle-noise">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <span class="hud-label">Fluid_Dynamics</span>
+                    <label class="switch">
+                        <input type="checkbox" checked id="toggle-fluid">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <span class="hud-label">CRT_Scanlines</span>
+                    <label class="switch">
+                        <input type="checkbox" id="toggle-scanlines">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <span class="hud-label">Grayscale_Mode</span>
+                    <label class="switch">
+                        <input type="checkbox" id="toggle-mono">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+            <button class="vortex-link" id="reset-overrides" style="margin-top: 20px; background: none; border: none; cursor: pointer;">[ RESET_SYSTEM_DEFAULTS ]</button>
+        </div>
+
+        <!-- Calendar Panel -->
+        <div class="hud-calendar-panel" id="hud-calendar-content">
+            <div class="cal-selection-header">
+                <span class="cal-mini-label">Select date</span>
+                <div class="cal-main-display">
+                    <span id="cal-display-string">Mon, Mar 15</span>
+                    <i data-lucide="pencil" class="cal-edit-icon"></i>
+                </div>
+            </div>
+            <div class="calendar-mini">
+                <div class="cal-header">
+                    <span id="cal-month-year">March 2026</span>
+                    <div class="cal-nav-arrows">
+                        <i data-lucide="chevron-left"></i>
+                        <i data-lucide="chevron-right"></i>
+                    </div>
+                </div>
+                <div class="cal-grid" id="cal-grid">
+                    <!-- Generated by JS -->
+                </div>
+            </div>
+            <div class="cal-action-footer">
+                <button class="cal-action-btn">Cancel</button>
+                <button class="cal-action-btn">OK</button>
+            </div>
+        </div>
+
+        <!-- Diagnostics Panel -->
+        <div class="hud-diagnostics-panel" id="hud-diagnostics-content">
+            <div class="diag-header">
+                <span class="ao-label">System Diagnostics</span>
+                <span class="terminal-version">Node_Instance: #7702</span>
+            </div>
+            <div class="diag-layout">
+                <div class="diag-tree-side">
+                    <span class="hud-label">COMPONENT_MAP</span>
+                    <div class="module-tree">
+                        <div class="tree-item"><span class="tree-branch"></span> CORE.UI <span class="status-tag">OK</span></div>
+                        <div class="tree-item"><span class="tree-branch"></span> SHADER.MARBLE <span class="status-tag">ACTIVE</span></div>
+                        <div class="tree-item"><span class="tree-branch"></span> ANIM.GSAP <span class="status-tag">OK</span></div>
+                        <div class="tree-item"><span class="tree-branch"></span> SCROLL.LENIS <span class="status-tag">OK</span></div>
+                    </div>
+                </div>
+                <div class="diag-graph-side">
+                    <span class="hud-label">PERF_STABILITY</span>
+                    <div class="sparkline-container">
+                        <canvas id="sparkline-canvas"></canvas>
+                    </div>
+                    <div class="diag-metrics">
+                        <span class="metric-item">JITTER: <span id="diag-jitter">0.02ms</span></span>
+                        <span class="metric-item">LATENCY: <span id="diag-lat">14ms</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Biography / Identity Panel -->
+        <div class="hud-bio-panel" id="hud-bio-content">
+            <div class="diag-header">
+                <span class="ao-label">Identity_Module</span>
+                <span class="terminal-version">STATUS: AUTHENTICATED</span>
+            </div>
+            <div class="bio-text-container">
+                <p id="bio-typing-target" class="bio-text"></p>
+            </div>
+            <div class="bio-footer">
+                <div class="terminal-version" style="opacity: 0.5;">ARCHITECT_ID: M.ELBOUANANI // MOROCCO_CORE</div>
+            </div>
+        </div>
+
+        <!-- Coffee / Focus Protocol Panel -->
+        <div class="hud-coffee-panel" id="hud-coffee-content">
+            <div class="diag-header">
+                <span class="ao-label">Neural_Fuel_Protocol</span>
+                <span class="terminal-version">OPTIMIZING_COGNITION</span>
+            </div>
+            <div class="coffee-layout">
+                <div class="coffee-visual-side">
+                    <div class="coffee-cup-anim">
+                        <div class="steam-wrap">
+                            <span class="steam-line"></span>
+                            <span class="steam-line"></span>
+                            <span class="steam-line"></span>
+                        </div>
+                        <div class="cup-body"></div>
+                    </div>
+                </div>
+                <div class="coffee-data-side">
+                    <span class="hud-label">CAFFEINE_SATURATION</span>
+                    <div class="res-bar"><div class="res-fill" id="coffee-fuel-fill"></div></div>
+                    <div class="diag-metrics" style="margin-top: 20px;">
+                        <span class="metric-item">FOCUS_GAIN: <span class="text-green">+42%</span></span>
+                        <span class="metric-item">AMBIENT_FREQ: 55Hz</span>
+                    </div>
+                    <a href="https://buymeacoffee.com/yourprofile" target="_blank" class="vortex-link" style="display: block; margin-top: 30px;">[ INJECT_REAL_FUEL_VIA_SUPPORT ]</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Identity Vault / Auth Panel -->
+        <div class="hud-auth-panel" id="hud-auth-content">
+            <div class="diag-header">
+                <span class="ao-label">Identity_Vault</span>
+                <span class="terminal-version" id="auth-status-label">LOCKED</span>
+            </div>
+            
+            <div class="auth-view" id="auth-logged-out">
+                <div class="settings-grid" style="margin-top: 20px;">
+                    <input type="text" id="auth-name" placeholder="ARCHITECT_NAME" class="hud-input" />
+                    <input type="email" id="auth-email" placeholder="EMAIL_ENCRYPTED" class="hud-input" />
+                    <input type="password" id="auth-pass" placeholder="SECRET_ACCESS_KEY" class="hud-input" />
+                </div>
+                <div class="auth-actions-group" style="margin-top: 25px; display: flex; gap: 15px;">
+                    <button class="vortex-link" id="btn-login" style="background: none; border: none; cursor: pointer;">[ LOGIN ]</button>
+                    <button class="vortex-link" id="btn-register" style="background: none; border: none; cursor: pointer;">[ REGISTER ]</button>
+                </div>
+                <div class="auth-divider" style="margin: 20px 0; border-top: 1px solid var(--grid-line); position: relative; text-align: center;">
+                    <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--hud-bg); padding: 0 10px; font-size: 0.6rem; color: var(--text-muted);">OR</span>
+                </div>
+                <button class="vortex-link" id="btn-google" style="width: 100%; background: none; border: none; cursor: pointer;">[ CONNECT_VIA_GOOGLE_AUTH ]</button>
+            </div>
+
+            <div class="auth-view" id="auth-logged-in" style="display: none;">
+                <div class="auth-user-card" style="margin-top: 30px; text-align: center;">
+                    <span class="hud-label">AUTHENTICATED_SESSION</span>
+                    <h2 id="user-display-name" style="font-family: var(--font-display); font-size: 2rem; margin: 15px 0;">---</h2>
+                    <button class="vortex-link" id="btn-logout" style="background: none; border: none; cursor: pointer;">[ TERMINATE_SESSION ]</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Topographic Background -->
     <div class="bg-overlay"></div>
+    <!-- Scanline Overlay -->
+    <div class="scanline-overlay" id="scanline-overlay"></div>
 
     <!-- MAIN HERO CONTENT -->
     <main class="container">
@@ -444,7 +767,6 @@
                 <div class="menu-info-block fade-menu-info">
                     <span class="info-title">Say Hello</span>
                     <a href="mailto:mohamed.elbouanani.fpn23@ump.ac.ma">mohamed.elbouanani.fpn23@ump.ac.ma</a>
-gmail.com</a>
                 </div>
             </div>
         </div>
