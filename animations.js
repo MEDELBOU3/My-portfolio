@@ -1,5 +1,50 @@
 // animations.js
+
 gsap.registerPlugin(ScrollTrigger);
+
+// 0. System Loader Animation
+export const initLoader = () => {
+    return new Promise((resolve) => {
+        const tl = gsap.timeline({
+            onComplete: resolve
+        });
+
+        const statusMessages = [
+            "Allocating WebGL Buffer...",
+            "Synchronizing Fluid Kernels...",
+            "Indexing Project Manifest...",
+            "Verifying Identity Module...",
+            "Architecture Loaded."
+        ];
+
+        const statusText = document.getElementById('loader-status-text');
+        const percentageText = document.getElementById('loader-percentage');
+
+        tl.to('#loader-bar-fill', {
+            width: "100%",
+            duration: 2.5,
+            ease: "power2.inOut",
+            onUpdate: function() {
+                const prog = Math.round(this.progress() * 100);
+                if (percentageText) percentageText.innerText = `${prog}%`;
+                if (statusText) {
+                    const msgIndex = Math.floor(this.progress() * (statusMessages.length - 1));
+                    statusText.innerText = statusMessages[msgIndex];
+                }
+            }
+        })
+        .to('#loader-overlay', {
+            clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)",
+            duration: 1.2,
+            ease: "expo.inOut"
+        })
+        .to('#loader-overlay', {
+            autoAlpha: 0,
+            ease: "expo.inOut"
+        });
+    });
+};
+
 // 1. Initial Hero Reveal Timeline
 export const initHeroAnimation = () => {
     // Split text into characters for the hero section
@@ -304,6 +349,7 @@ export const initWorkOverlay = () => {
 
         // 2. Allow mouse clicks on the modal
         videoModal.style.pointerEvents = "auto";
+        videoWrapper.style.visibility = "visible"; // Ensure wrapper is visible before animating opacity
 
         // 3. Animate it onto the screen
         gsap.to(videoBackdrop, { opacity: 1, duration: 0.4, ease: "power2.out" });
@@ -325,7 +371,10 @@ export const initWorkOverlay = () => {
             scale: 0.95,
             y: 20,
             duration: 0.4,
-            ease: "power2.in"
+            ease: "power2.in",
+            onComplete: () => { // Hide wrapper completely after animation
+                videoWrapper.style.visibility = "hidden";
+            }
         });
 
         gsap.to(videoBackdrop, {
@@ -589,4 +638,470 @@ export const initVisionSection = () => {
             scrub: true
         }
     });
+};
+
+export const initSidebarNavigator = () => {
+    // 1. Overall Progress Fill
+    gsap.to('#side-progress', {
+        scaleY: 1,
+        ease: "none",
+        scrollTrigger: {
+            trigger: "body",
+            start: "top top",
+            end: "bottom bottom",
+            scrub: true
+        }
+    });
+
+    // 2. Section Tracking
+    const sections = [
+        { id: 'canvas-container', label: 'HOME', num: '01' },
+        { id: 'work', label: 'WORK', num: '02' },
+        { id: 'engineering', label: 'CORE', num: '03' },
+        { id: 'game-dev', label: 'GAME', num: '04' },
+        { id: 'philosophy', label: 'VISION', num: '05' },
+        { id: 'contact', label: 'CONTACT', num: '06' }
+    ];
+
+    const sideNum = document.getElementById('side-num');
+    const sideLabel = document.getElementById('side-label');
+
+    sections.forEach(section => {
+        ScrollTrigger.create({
+            trigger: `#${section.id}`,
+            start: "top center",
+            end: "bottom center",
+            onEnter: () => updateSidebar(section.num, section.label),
+            onEnterBack: () => updateSidebar(section.num, section.label)
+        });
+    });
+
+    function updateSidebar(num, label) {
+        gsap.to([sideNum, sideLabel], {
+            opacity: 0, y: -10, duration: 0.2, onComplete: () => {
+                sideNum.innerText = num;
+                sideLabel.innerText = label;
+                gsap.to([sideNum, sideLabel], { opacity: 1, y: 0, duration: 0.2 });
+            }
+        });
+    }
+};
+
+export const initTelemetryHUD = () => {
+    const fpsEl = document.getElementById('hud-fps');
+    const resEl = document.getElementById('hud-res');
+    const veloEl = document.getElementById('hud-velo');
+    const uptimeEl = document.getElementById('hud-uptime');
+    const pingEl = document.getElementById('hud-ping');
+    const hud = document.querySelector('.system-hud');
+    const expandBtn = document.getElementById('hud-expand-trigger');
+    const settingsBtn = document.getElementById('hud-settings-trigger');
+    const calendarBtn = document.getElementById('hud-calendar-trigger');
+    const diagBtn = document.getElementById('hud-diagnostics-trigger');
+    const bioBtn = document.getElementById('hud-bio-trigger'); // Defined missing variable
+    const authBtn = document.getElementById('hud-auth-trigger');
+    const coffeeBtn = document.getElementById('hud-coffee-trigger');
+    const bioTarget = document.getElementById('bio-typing-target'); // Moved declaration here
+    const terminalBody = document.getElementById('hud-terminal');
+    const cpuFill = document.getElementById('cpu-fill');
+    const memFill = document.getElementById('mem-fill');
+    const calDisplayStr = document.getElementById('cal-display-string');
+    const coffeeFuelFill = document.getElementById('coffee-fuel-fill'); // Fixed reference
+    const sparkCanvas = document.getElementById('sparkline-canvas');
+
+    // Helper to clear all HUD states before switching
+    const clearHudStates = () => {
+        const states = ['is-expanded', 'is-settings', 'is-calendar', 'is-diagnostics', 'is-biography', 'is-coffee', 'is-auth'];
+        hud.classList.remove(...states);
+    };
+
+    // 0. Expansion Logic
+    if (expandBtn) {
+        expandBtn.addEventListener('click', () => {
+            const wasActive = hud.classList.contains('is-expanded');
+            clearHudStates();
+            if (!wasActive) {
+                hud.classList.add('is-expanded');
+                addLog("> TELEMETRY_FEED: EXPANDED");
+            }
+        });
+    }
+
+    // 0.1 Settings Logic (Environment Controls)
+    if (settingsBtn) {
+        settingsBtn.addEventListener('click', () => {
+            const wasActive = hud.classList.contains('is-settings');
+            clearHudStates();
+            if (!wasActive) hud.classList.add('is-settings');
+        });
+    }
+
+    // 0.1.2 Calendar Logic
+    if (calendarBtn) {
+        calendarBtn.addEventListener('click', () => {
+            const wasActive = hud.classList.contains('is-calendar');
+            clearHudStates();
+            if (!wasActive) hud.classList.add('is-calendar');
+        });
+    }
+
+    // 0.1.3 Auth Logic
+    if (authBtn) {
+        authBtn.addEventListener('click', () => {
+            const wasActive = hud.classList.contains('is-auth');
+            clearHudStates();
+            if (!wasActive) hud.classList.add('is-auth');
+        });
+    }
+
+    if (diagBtn) {
+        diagBtn.addEventListener('click', () => {
+            const wasActive = hud.classList.contains('is-diagnostics');
+            clearHudStates();
+            
+            if (!wasActive) {
+                hud.classList.add('is-diagnostics');
+                // Fix: Initialize canvas size when panel is opened
+                if (sparkCanvas) {
+                    requestAnimationFrame(() => {
+                        sparkCanvas.width = sparkCanvas.parentElement.offsetWidth || 300;
+                        sparkCanvas.height = sparkCanvas.parentElement.offsetHeight || 80;
+                    });
+                }
+            }
+        });
+    }
+
+    // 0.1.5 Coffee / Focus Protocol Logic
+    let focusAudioCtx, focusOsc, focusGain;
+
+    if (coffeeBtn) {
+        coffeeBtn.addEventListener('click', () => {
+            const wasActive = hud.classList.contains('is-coffee');
+            clearHudStates();
+            if (!wasActive) hud.classList.add('is-coffee');
+            
+            const isActive = hud.classList.contains('is-coffee');
+            document.documentElement.setAttribute('data-focus-mode', isActive);
+            
+            if (isActive) {
+                startFocusAudio();
+                addLog("> FOCUS_PROTOCOL: INITIALIZED");
+                animateCoffeeFuel();
+            } else {
+                stopFocusAudio();
+                addLog("> FOCUS_PROTOCOL: TERMINATED");
+            }
+        });
+    }
+
+    function startFocusAudio() {
+        try {
+            focusAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            focusGain = focusAudioCtx.createGain();
+            focusGain.gain.setValueAtTime(0, focusAudioCtx.currentTime);
+            focusGain.gain.linearRampToValueAtTime(0.05, focusAudioCtx.currentTime + 2); // Fade in
+
+            // Create a low-frequency ambient hum
+            focusOsc = focusAudioCtx.createOscillator();
+            focusOsc.type = 'sine';
+            focusOsc.frequency.setValueAtTime(55, focusAudioCtx.currentTime); // A1 Note
+            
+            focusOsc.connect(focusGain);
+            focusGain.connect(focusAudioCtx.destination);
+            focusOsc.start();
+        } catch(e) { console.warn("Audio not supported"); }
+    }
+
+    function stopFocusAudio() {
+        if (focusGain && focusAudioCtx) {
+            focusGain.gain.linearRampToValueAtTime(0, focusAudioCtx.currentTime + 0.5);
+            setTimeout(() => {
+                if (focusOsc) focusOsc.stop();
+                if (focusAudioCtx) focusAudioCtx.close();
+            }, 500);
+        }
+    }
+
+    function animateCoffeeFuel() {
+        if (coffeeFuelFill) {
+            gsap.fromTo(coffeeFuelFill, { width: "0%" }, { width: "85%", duration: 3, ease: "power2.inOut" });
+        }
+    }
+
+    // 0.1.4 Biography Logic
+    let isTyping = false;
+    const fullBio = "I am Mohamed El-bouanani, a Creative Developer specializing in high-performance digital environments. My philosophy is built on technical rigor and aesthetic precision. From proprietary C++ engines to fluid WebGL simulations, I bridge the gap between low-level architecture and high-end user experiences. Based in Morocco, I architect systems that aren't just seen, but felt.";
+
+    if (bioBtn) {
+        bioBtn.addEventListener('click', () => {
+            const wasActive = hud.classList.contains('is-biography');
+            clearHudStates();
+            if (!wasActive) hud.classList.add('is-biography');
+
+            if (!wasActive && !isTyping && hud.classList.contains('is-biography')) {
+                startBioTypewriter();
+            }
+        });
+    }
+
+    function startBioTypewriter() {
+        isTyping = true;
+        bioTarget.innerText = "";
+        let i = 0;
+        
+        // Safe Audio Context creation
+        let audioCtx;
+        try {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        } catch(e) { console.warn("AudioContext not supported"); }
+
+        function typeCharacter() {
+            if (i < fullBio.length && hud.classList.contains('is-biography')) {
+                // Use textContent instead of innerText to preserve spaces during incremental updates
+                bioTarget.textContent += fullBio.charAt(i);
+                
+                // Play technical "blip" sound if context exists
+                if (audioCtx && i % 2 === 0) { 
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(440 + (Math.random() * 200), audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.05);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.05);
+                }
+
+                i++;
+                setTimeout(typeCharacter, 25);
+            } else {
+                isTyping = false;
+                if (audioCtx) audioCtx.close();
+            }
+        }
+        typeCharacter();
+    }
+
+    // Generate Calendar Grid
+    const calGrid = document.getElementById('cal-grid');
+    const monthYearEl = document.getElementById('cal-month-year');
+
+    // Ensure we have the grid and populate it
+    if (calGrid && monthYearEl) {
+        // Clear any existing placeholders/comments to ensure generation
+        calGrid.innerHTML = '';
+        
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth();
+        const today = now.getDate();
+
+        // Set Main Display String (e.g., Mon, Mar 15)
+        const displayDate = new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric' }).format(now);
+        if (calDisplayStr) calDisplayStr.innerText = displayDate;
+
+        // Set Dynamic Month/Year header
+        const monthName = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(now);
+        monthYearEl.innerText = `${monthName} ${year}`;
+
+        const firstDay = new Date(year, month, 1).getDay(); // Day of week for the 1st
+        const daysInMonth = new Date(year, month + 1, 0).getDate(); // Total days in month
+
+        const dayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+        dayLabels.forEach(d => {
+            const el = document.createElement('div');
+            el.className = 'cal-day';
+            el.innerText = d;
+            calGrid.appendChild(el);
+        });
+
+        // Add empty cells for the offset to align the 1st correctly
+        for (let i = 0; i < firstDay; i++) {
+            const emptyEl = document.createElement('div');
+            emptyEl.className = 'cal-date';
+            emptyEl.innerHTML = '&nbsp;'; 
+            calGrid.appendChild(emptyEl);
+        }
+
+        for (let i = 1; i <= daysInMonth; i++) {
+            const el = document.createElement('div');
+            el.className = 'cal-date';
+            if (i === today) el.classList.add('active');
+            
+            // Keep simulated availability logic for the professional persona
+            if (i > today && (i % 6 === 0 || i % 7 === 0)) el.classList.add('available');
+            
+            el.innerText = i;
+            calGrid.appendChild(el);
+        }
+    }
+
+    // 0.2 Environment Overrides
+    document.getElementById('toggle-grid')?.addEventListener('change', (e) => {
+        const lines = document.querySelectorAll('.z-line, .f-line, .o-line, .bottom-grid, .stats-line');
+        gsap.to(lines, { opacity: e.target.checked ? 1 : 0, duration: 0.5 });
+        // Custom log to terminal
+        addLog(`> GRID_SYSTEM: ${e.target.checked ? 'ENABLED' : 'DISABLED'}`);
+    });
+
+    document.getElementById('toggle-noise')?.addEventListener('change', (e) => {
+        gsap.to('.bg-overlay', { opacity: e.target.checked ? 0.6 : 0, duration: 0.5 });
+        addLog(`> TOPOGRAPHIC_NOISE: ${e.target.checked ? 'ACTIVE' : 'INACTIVE'}`);
+    });
+
+    document.getElementById('toggle-fluid')?.addEventListener('change', (e) => {
+        const canvas = document.getElementById('fluid-canvas');
+        gsap.to(canvas, { opacity: e.target.checked ? 1 : 0, duration: 0.5 });
+        addLog(`> FLUID_ENGINE: ${e.target.checked ? 'RUNNING' : 'SUSPENDED'}`);
+    });
+
+    document.getElementById('toggle-scanlines')?.addEventListener('change', (e) => {
+        document.getElementById('scanline-overlay').classList.toggle('active', e.target.checked);
+        addLog(`> CRT_EMULATION: ${e.target.checked ? 'ON' : 'OFF'}`);
+    });
+
+    document.getElementById('toggle-mono')?.addEventListener('change', (e) => {
+        document.documentElement.setAttribute('data-mono', e.target.checked ? 'true' : 'false');
+        addLog(`> MONO_FILTER: ${e.target.checked ? 'ENABLED' : 'DISABLED'}`);
+    });
+
+    document.getElementById('reset-overrides')?.addEventListener('click', () => {
+        addLog(`> INITIATING_SYSTEM_RESET...`);
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
+    });
+
+    // Sparkline Performance Simulation
+    if (sparkCanvas) {
+        const ctx = sparkCanvas.getContext('2d');
+        let points = Array(30).fill(40);
+        const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-green').trim() || '#7d9e84';
+        
+        const drawSparkline = () => {
+            // Only animate if diagnostics panel is active to save resources
+            if (!hud.classList.contains('is-diagnostics')) {
+                requestAnimationFrame(drawSparkline);
+                return;
+            }
+            
+            ctx.clearRect(0, 0, sparkCanvas.width, sparkCanvas.height);
+            points.shift();
+            points.push(40 + (Math.random() - 0.5) * 20);
+            
+            ctx.beginPath();
+            ctx.strokeStyle = accentColor;
+            ctx.lineWidth = 2;
+            ctx.lineJoin = 'round';
+            
+            const step = sparkCanvas.width / (points.length - 1);
+            points.forEach((p, i) => {
+                i === 0 ? ctx.moveTo(0, p) : ctx.lineTo(i * step, p);
+            });
+            ctx.stroke();
+            
+            document.getElementById('diag-jitter').innerText = (Math.random() * 0.05).toFixed(3) + 'ms';
+            requestAnimationFrame(drawSparkline);
+        };
+        drawSparkline();
+    }
+
+    // Terminal Log Simulation
+    const logs = [
+        "> Optimizing vertex shaders...",
+        "> Lenis: Scroll depth updated.",
+        "> Syncing 3D scene objects.",
+        "> Bypassing cache for telemetry.",
+        "> Refreshing fluid density map.",
+        "> GSAP: Timeline node processed.",
+        "> System integrity at 98.4%",
+        "> Vortex channel link active."
+    ];
+
+    // Advanced Resource Simulation
+    setInterval(() => {
+        if (cpuFill) cpuFill.style.width = `${Math.floor(Math.random() * (60 - 20) + 20)}%`;
+        if (memFill) memFill.style.width = `${Math.floor(Math.random() * (40 - 15) + 15)}%`;
+        if (pingEl) pingEl.innerText = `${Math.floor(Math.random() * (42 - 14) + 14)}ms`;
+    }, 3000);
+
+    // Session Uptime
+    let startTime = Date.now();
+    setInterval(() => {
+        let elapsed = Math.floor((Date.now() - startTime) / 1000);
+        let mins = Math.floor(elapsed / 60).toString().padStart(2, '0');
+        let secs = (elapsed % 60).toString().padStart(2, '0');
+        if (uptimeEl) uptimeEl.innerText = `${mins}:${secs}`;
+    }, 1000);
+
+    setInterval(() => {
+        if (terminalBody) {
+            const log = document.createElement('div');
+            log.className = 'log-line';
+            log.innerText = logs[Math.floor(Math.random() * logs.length)];
+            terminalBody.appendChild(log);
+            if (terminalBody.childNodes.length > 12) terminalBody.removeChild(terminalBody.firstChild);
+        }
+    }, 4000);
+
+    // 1. Viewport Tracking
+    const updateRes = () => {
+        resEl.innerText = `${window.innerWidth}×${window.innerHeight}`;
+    };
+    window.addEventListener('resize', updateRes);
+    updateRes();
+
+    // 2. FPS Calculation
+    let frameCount = 0;
+    let lastTime = performance.now();
+    
+    const updateFPS = () => {
+        frameCount++;
+        const now = performance.now();
+        if (now >= lastTime + 1000) {
+            fpsEl.innerText = frameCount;
+            
+            // Color feedback based on performance
+            if (frameCount < 45) fpsEl.style.color = '#ff3366';
+            else fpsEl.style.color = 'inherit';
+            
+            frameCount = 0;
+            lastTime = now;
+        }
+        requestAnimationFrame(updateFPS);
+    };
+    requestAnimationFrame(updateFPS);
+
+    // 3. Velocity Tracking (using Lenis if available)
+    const updateVelocity = () => {
+        if (window.lenis) {
+            // Convert velocity to absolute 2-decimal string
+            const velo = Math.abs(window.lenis.velocity).toFixed(2);
+            veloEl.innerText = velo;
+            
+            // Hide HUD during massive scrolls to reduce distraction, unless expanded
+            if (hud && !hud.classList.contains('is-expanded')) {
+                hud.style.opacity = Math.abs(window.lenis.velocity) > 50 ? '0.3' : '1';
+            }
+        }
+        requestAnimationFrame(updateVelocity);
+    };
+    requestAnimationFrame(updateVelocity);
+};
+
+/**
+ * World-class logging utility exported for external modules (like auth.js)
+ */
+export const writeToTerminal = (msg) => {
+    const terminalBody = document.getElementById('hud-terminal');
+    if (terminalBody) {
+        const log = document.createElement('div');
+        log.className = 'log-line';
+        log.innerText = msg;
+        terminalBody.appendChild(log);
+        if (terminalBody.childNodes.length > 12) terminalBody.removeChild(terminalBody.firstChild);
+    }
 };
