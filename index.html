@@ -1,1018 +1,248 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mohamed El-bouanani | Creative Developer</title>
-
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500&display=swap"
-        rel="stylesheet">
-
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- CSS -->
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10110f">
+  <meta name="description" content="Mohamed El Bouanani — Creative developer and computer science student building real-time 3D tools, interactive systems and digital products.">
+  <title>Mohamed El Bouanani — Creative Developer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+  <script src="https://unpkg.com/split-type"></script>
 </head>
-
 <body>
-    <!-- ========================================= -->
-    <!-- SYSTEM INITIALIZATION LOADER              -->
-    <!-- ========================================= -->
-    <div id="loader-overlay" class="loader-overlay">
-        <div class="loader-grid-bg"></div>
-        <div class="loader-content">
-            <div class="loader-header">
-                <span class="loader-label">System_Boot_Sequence</span>
-                <span class="loader-version">v1.0.4-STABLE</span>
-            </div>
-            <div class="loader-bar-bg">
-                <div id="loader-bar-fill" class="loader-bar-fill"></div>
-            </div>
-            <div class="loader-readout-grid">
-                <div class="readout-item">MEM_ADDR: <span id="load-hex">0x000000</span></div>
-                <div class="readout-item">COORD: <span id="load-coord">[0.0, 0.0]</span></div>
-            </div>
-            <div class="loader-status-container">
-                <span id="loader-status-text" class="loader-status">Initializing Core Modules...</span>
-                <span id="loader-percentage" class="loader-percentage">0%</span>
-            </div>
-        </div>
-        <!-- Shutter Panels for Cinematic Exit -->
-        <div class="shutter shutter-top"></div>
-        <div class="shutter shutter-bottom"></div>
+  <div class="preloader" id="preloader" aria-hidden="true">
+    <div class="preloader-top"><span>ME / PORTFOLIO</span><span>INDEPENDENT DIGITAL PRACTICE</span></div>
+    <div class="preloader-center"><span class="preloader-mark">M<span>.</span></span><span class="preloader-status">INITIALIZING EXPERIENCE <i></i></span></div>
+    <div class="preloader-bottom"><span>CREATIVE DEVELOPER</span><span id="load-progress">00%</span></div>
+    <div class="preloader-line"><span id="load-line"></span></div>
+  </div>
+
+  <div class="noise" aria-hidden="true"></div>
+  <div class="cursor-dot" aria-hidden="true"></div>
+  <div class="cursor-ring" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Mohamed El Bouanani home"><span class="brand-symbol">M<span>.</span></span><span class="brand-name">MOHAMED<br>EL BOUANANI</span></a>
+    <nav class="desktop-nav" aria-label="Main navigation">
+      <a href="#work">WORK <span>01</span></a>
+      <a href="#approach">APPROACH <span>02</span></a>
+      <a href="#about">ABOUT <span>03</span></a>
+    </nav>
+    <a class="header-contact magnetic" href="#contact"><span>LET'S TALK</span><b>↗</b></a>
+    <button class="menu-toggle" id="menu-toggle" aria-label="Open navigation" aria-expanded="false"><span></span><span></span></button>
+  </header>
+
+  <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+    <div class="menu-overlay-top">
+      <a class="menu-overlay-brand" href="#top">M<span>.</span> / MOHAMED EL BOUANANI</a>
+      <button class="menu-close" id="menu-close" type="button" aria-label="Close navigation">CLOSE <i>×</i></button>
     </div>
-
-    <!-- ========================================= -->
-    <!-- SIDEBAR NAVIGATION PANEL                  -->
-    <!-- ========================================= -->
-    <aside class="sidebar-panel">
-        <div class="side-progress-container">
-            <div class="side-progress-fill" id="side-progress"></div>
-        </div>
-        <div class="side-info">
-            <span class="side-index" id="side-num">01</span>
-            <span class="side-label" id="side-label">HOME</span>
-        </div>
-    </aside>
-
-    <!-- ========================================= -->
-    <!-- SYSTEM TELEMETRY HUD                      -->
-    <!-- ========================================= -->
-    <div class="system-hud">
-        <div class="hud-item">
-            <span class="hud-label">FPS</span>
-            <span class="hud-value" id="hud-fps">60</span>
-        </div>
-        <div class="hud-item">
-            <span class="hud-label">VIEW</span>
-            <span class="hud-value" id="hud-res">1920×1080</span>
-        </div>
-        <div class="hud-item">
-            <span class="hud-label">VELO</span>
-            <span class="hud-value" id="hud-velo">0.00</span>
-        </div>
-        <div class="hud-item">
-            <span class="hud-label">UPTIME</span>
-            <span class="hud-value" id="hud-uptime">00:00</span>
-        </div>
-        <div class="hud-item">
-            <span class="hud-label">PING</span>
-            <span class="hud-value" id="hud-ping">24ms</span>
-        </div>
-        <div class="hud-status">
-            <div class="status-pulse"></div>
-            <span class="hud-label">SYSTEM_STABLE</span>
-        </div>
-        
-        <div class="hud-controls-group">
-            <button class="hud-expand-btn" id="hud-auth-trigger" aria-label="Identity Vault">
-                <i data-lucide="log-in"></i>
-            </button>
-            <button class="hud-expand-btn" id="hud-coffee-trigger" aria-label="Neural Fuel">
-                <i data-lucide="coffee"></i>
-            </button>
-            <button class="hud-expand-btn" id="hud-bio-trigger" aria-label="Identity Module">
-                <i data-lucide="user"></i>
-            </button>
-            <button class="hud-expand-btn" id="hud-diagnostics-trigger" aria-label="Diagnostics">
-                <i data-lucide="activity"></i>
-            </button>
-            <button class="hud-expand-btn" id="hud-calendar-trigger" aria-label="Schedule">
-                <i data-lucide="calendar"></i>
-            </button>
-            <button class="hud-expand-btn" id="hud-settings-trigger" aria-label="System Settings">
-                <i data-lucide="settings"></i>
-            </button>
-            <button class="hud-expand-btn" id="hud-expand-trigger" aria-label="Expand Telemetry">
-                <i data-lucide="chevron-right"></i>
-            </button>
-        </div>
-
-        <div class="hud-expanded-content" id="hud-expanded-content">
-            <div class="hud-vortex-header">
-                <span class="ao-label">Digital Vortex Feed</span>
-                <a href="https://www.youtube.com/@DigitalVortex203" target="_blank" class="vortex-link">Channel ↗</a>
-            </div>
-            <div class="hud-main-layout">
-                <div class="hud-video-side">
-                    <div class="hud-video-grid">
-                        <!-- Video 1 -->
-                        <div class="hud-video-card video-item" data-yt="zepyWyzPxOQ">
-                            <div class="video-thumb-mini"><img src="https://img.youtube.com/vi/zepyWyzPxOQ/mqdefault.jpg" alt="Video"></div>
-                            <span class="video-tag">LOG_01</span>
-                        </div>
-                        <!-- Video 2 -->
-                        <div class="hud-video-card video-item" data-yt="bE_A5kopyWw">
-                            <div class="video-thumb-mini"><img src="https://img.youtube.com/vi/bE_A5kopyWw/mqdefault.jpg" alt="Video"></div>
-                            <span class="video-tag">LOG_02</span>
-                        </div>
-                        <!--Video 3-->
-                        <div class="hud-video-card video-item" data-yt="H8K67-3CIac">
-                            <div class="video-thumb-mini"><img src="https://img.youtube.com/vi/H8K67-3CIac/mqdefault.jpg" alt="Video"></div>
-                            <span class="video-tag">LOG_03</span>
-                        </div>
-                        <!--Video 4-->
-                        <div class="hud-video-card video-item" data-yt="EY7ggEMSEGI">
-                            <div class="video-thumb-mini"><img src="https://img.youtube.com/vi/EY7ggEMSEGI/mqdefault.jpg" alt="Video"></div>
-                            <span class="video-tag">LOG_04</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="hud-terminal-side">
-                    <div class="terminal-header">
-                        <span class="terminal-tab">System Logs</span>
-                        <span class="terminal-version">v1.0.4-stable</span>
-                    </div>
-                    <div class="hud-resources">
-                        <div class="res-bar-item">
-                            <span class="res-label">CPU_LOAD</span>
-                            <div class="res-bar"><div class="res-fill" id="cpu-fill" style="width: 45%;"></div></div>
-                        </div>
-                        <div class="res-bar-item">
-                            <span class="res-label">MEM_USE</span>
-                            <div class="res-bar"><div class="res-fill" id="mem-fill" style="width: 22%;"></div></div>
-                        </div>
-                    </div>
-                    <div class="terminal-body" id="hud-terminal">
-                        <div class="log-line">> Initializing system modules...</div>
-                        <div class="log-line">> WebGL: r128 active.</div>
-                        <div class="log-line">> GSAP: 3.12.2 active.</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- New Settings Panel -->
-        <div class="hud-settings-panel" id="hud-settings-content">
-            <span class="ao-label">System Overrides</span>
-            <div class="settings-grid">
-                <div class="setting-item">
-                    <span class="hud-label">Architectural_Grid</span>
-                    <label class="switch">
-                        <input type="checkbox" checked id="toggle-grid">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                <div class="setting-item">
-                    <span class="hud-label">Topographic_Noise</span>
-                    <label class="switch">
-                        <input type="checkbox" checked id="toggle-noise">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                <div class="setting-item">
-                    <span class="hud-label">Fluid_Dynamics</span>
-                    <label class="switch">
-                        <input type="checkbox" checked id="toggle-fluid">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                <div class="setting-item">
-                    <span class="hud-label">CRT_Scanlines</span>
-                    <label class="switch">
-                        <input type="checkbox" id="toggle-scanlines">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                <div class="setting-item">
-                    <span class="hud-label">Grayscale_Mode</span>
-                    <label class="switch">
-                        <input type="checkbox" id="toggle-mono">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-            </div>
-            <button class="vortex-link" id="reset-overrides" style="margin-top: 20px; background: none; border: none; cursor: pointer;">[ RESET_SYSTEM_DEFAULTS ]</button>
-        </div>
-
-        <!-- Calendar Panel -->
-        <div class="hud-calendar-panel" id="hud-calendar-content">
-            <div class="cal-selection-header">
-                <span class="cal-mini-label">Select date</span>
-                <div class="cal-main-display">
-                    <span id="cal-display-string">Mon, Mar 15</span>
-                    <i data-lucide="pencil" class="cal-edit-icon"></i>
-                </div>
-            </div>
-            <div class="calendar-mini">
-                <div class="cal-header">
-                    <span id="cal-month-year">March 2026</span>
-                    <div class="cal-nav-arrows">
-                        <i data-lucide="chevron-left"></i>
-                        <i data-lucide="chevron-right"></i>
-                    </div>
-                </div>
-                <div class="cal-grid" id="cal-grid">
-                    <!-- Generated by JS -->
-                </div>
-            </div>
-            <div class="cal-action-footer">
-                <button class="cal-action-btn">Cancel</button>
-                <button class="cal-action-btn">OK</button>
-            </div>
-        </div>
-
-        <!-- Diagnostics Panel -->
-        <div class="hud-diagnostics-panel" id="hud-diagnostics-content">
-            <div class="diag-header">
-                <span class="ao-label">System Diagnostics</span>
-                <span class="terminal-version">Node_Instance: #7702</span>
-            </div>
-            <div class="diag-layout">
-                <div class="diag-tree-side">
-                    <span class="hud-label">COMPONENT_MAP</span>
-                    <div class="module-tree">
-                        <div class="tree-item"><span class="tree-branch"></span> CORE.UI <span class="status-tag">OK</span></div>
-                        <div class="tree-item"><span class="tree-branch"></span> SHADER.MARBLE <span class="status-tag">ACTIVE</span></div>
-                        <div class="tree-item"><span class="tree-branch"></span> ANIM.GSAP <span class="status-tag">OK</span></div>
-                        <div class="tree-item"><span class="tree-branch"></span> SCROLL.LENIS <span class="status-tag">OK</span></div>
-                    </div>
-                </div>
-                <div class="diag-graph-side">
-                    <span class="hud-label">PERF_STABILITY</span>
-                    <div class="sparkline-container">
-                        <canvas id="sparkline-canvas"></canvas>
-                    </div>
-                    <div class="diag-metrics">
-                        <span class="metric-item">JITTER: <span id="diag-jitter">0.02ms</span></span>
-                        <span class="metric-item">LATENCY: <span id="diag-lat">14ms</span></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Biography / Identity Panel -->
-        <div class="hud-bio-panel" id="hud-bio-content">
-            <div class="diag-header">
-                <span class="ao-label">Identity_Module</span>
-                <span class="terminal-version">STATUS: AUTHENTICATED</span>
-            </div>
-            <div class="bio-text-container">
-                <p id="bio-typing-target" class="bio-text"></p>
-            </div>
-            <div class="bio-footer">
-                <div class="terminal-version" style="opacity: 0.5;">ARCHITECT_ID: M.ELBOUANANI // MOROCCO_CORE</div>
-            </div>
-        </div>
-
-        <!-- Coffee / Focus Protocol Panel -->
-        <div class="hud-coffee-panel" id="hud-coffee-content">
-            <div class="diag-header">
-                <span class="ao-label">Neural_Fuel_Protocol</span>
-                <span class="terminal-version">OPTIMIZING_COGNITION</span>
-            </div>
-            <div class="coffee-layout">
-                <div class="coffee-visual-side">
-                    <div class="coffee-cup-anim">
-                        <div class="steam-wrap">
-                            <span class="steam-line"></span>
-                            <span class="steam-line"></span>
-                            <span class="steam-line"></span>
-                        </div>
-                        <div class="cup-body"></div>
-                    </div>
-                </div>
-                <div class="coffee-data-side">
-                    <span class="hud-label">CAFFEINE_SATURATION</span>
-                    <div class="res-bar"><div class="res-fill" id="coffee-fuel-fill"></div></div>
-                    <div class="diag-metrics" style="margin-top: 20px;">
-                        <span class="metric-item">FOCUS_GAIN: <span class="text-green">+42%</span></span>
-                        <span class="metric-item">AMBIENT_FREQ: 55Hz</span>
-                    </div>
-                    <a href="https://buymeacoffee.com/yourprofile" target="_blank" class="vortex-link" style="display: block; margin-top: 30px;">[ INJECT_REAL_FUEL_VIA_SUPPORT ]</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Identity Vault / Auth Panel -->
-        <div class="hud-auth-panel" id="hud-auth-content">
-            <div class="diag-header">
-                <span class="ao-label">Identity_Vault</span>
-                <span class="terminal-version" id="auth-status-label">LOCKED</span>
-            </div>
-            
-            <div class="auth-view" id="auth-logged-out">
-                <div class="settings-grid" style="margin-top: 20px;">
-                    <input type="text" id="auth-name" placeholder="ARCHITECT_NAME" class="hud-input" />
-                    <input type="email" id="auth-email" placeholder="EMAIL_ENCRYPTED" class="hud-input" />
-                    <input type="password" id="auth-pass" placeholder="SECRET_ACCESS_KEY" class="hud-input" />
-                </div>
-                <div class="auth-actions-group" style="margin-top: 25px; display: flex; gap: 15px;">
-                    <button class="vortex-link" id="btn-login" style="background: none; border: none; cursor: pointer;">[ LOGIN ]</button>
-                    <button class="vortex-link" id="btn-register" style="background: none; border: none; cursor: pointer;">[ REGISTER ]</button>
-                </div>
-                <div class="auth-divider" style="margin: 20px 0; border-top: 1px solid var(--grid-line); position: relative; text-align: center;">
-                    <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--hud-bg); padding: 0 10px; font-size: 0.6rem; color: var(--text-muted);">OR</span>
-                </div>
-                <button class="vortex-link" id="btn-google" style="width: 100%; background: none; border: none; cursor: pointer;">[ CONNECT_VIA_GOOGLE_AUTH ]</button>
-            </div>
-
-            <div class="auth-view" id="auth-logged-in" style="display: none;">
-                <div class="auth-user-card" style="margin-top: 30px; text-align: center;">
-                    <span class="hud-label">AUTHENTICATED_SESSION</span>
-                    <h2 id="user-display-name" style="font-family: var(--font-display); font-size: 2rem; margin: 15px 0;">---</h2>
-                    <button class="vortex-link" id="btn-logout" style="background: none; border: none; cursor: pointer;">[ TERMINATE_SESSION ]</button>
-                </div>
-            </div>
-        </div>
+    <div class="mobile-menu-inner">
+      <span class="eyebrow">INDEX / 2026 — MOROCCO</span>
+      <a href="#work"><span>Selected work</span><sup>01</sup></a>
+      <a href="#lab"><span>Experiments & lab</span><sup>02</sup></a>
+      <a href="#approach"><span>Approach</span><sup>03</sup></a>
+      <a href="#about"><span>About Mohamed</span><sup>04</sup></a>
+      <a href="#contact"><span>Contact</span><sup>05</sup></a>
+      <div class="menu-overlay-bottom">
+        <span>INDEPENDENT CREATIVE DEVELOPMENT</span>
+        <span>SCROLL LESS. EXPLORE MORE. ↗</span>
+      </div>
     </div>
+  </div>
 
-    <!-- Topographic Background -->
-    <div class="bg-overlay"></div>
-    <!-- Scanline Overlay -->
-    <div class="scanline-overlay" id="scanline-overlay"></div>
-
-    <!-- MAIN HERO CONTENT -->
-    <main class="container">
-        <!-- We need a slightly larger container for the shader -->
-        <div id="canvas-container">
-            <canvas id="fluid-canvas"></canvas>
-        </div>
-        <!-- Header -->
-        <header>
-            <div class="logo">MED</div>
-
-            <div class="header-controls">
-                <button class="magnetic-element icon-btn" id="theme-toggle" aria-label="Toggle Theme">
-                    <i data-lucide="sun" id="theme-icon"></i>
-                </button>
-
-                <button class="magnetic-element menu-btn" id="menu-open">
-                    <span>MENU</span>
-                    <div class="menu-dot"></div>
-                </button>
-            </div>
-
-        </header>
-
-        <!-- Stats Divider -->
-        <div class="stats-container">
-            <div class="stats-line" id="stats-line"></div>
-            <div class="stat-item fade-in">20+ Projects Completed</div>
-            <div class="stat-item fade-in">Frontend Web Developer</div>
-            <div class="stat-item fade-in">Based in Morocco</div>
-        </div>
-
-        <!-- Massive Hero Typography -->
-        <div class="hero">
-            <div class="hero-line hero-line-1">
-                <div class="split-text">I BUILD MO<span class="stylized-d">D</span>ERN</div>
-                <div class="split-text text-green">WEBSITES</div>
-            </div>
-            <div class="hero-line hero-line-2">
-                <div class="split-text underline-wrapper">THAT WORK</div>
-            </div>
-        </div>
-
-        <!-- About Snippet -->
-        <div class="about-section">
-            <div class="about-title fade-in">About:</div>
-            <div class="about-text fade-in">
-                I'm Mohamed El-bouanani , a frontend developer focused on building modern, fast, and reliable websites.
-                I care not
-                only about how a site looks, but also about how it performs, scales, and feels for real users.
-                <br>
-                <a href="https://github.com/MEDELBOU3" target="_blank" class="magnetic-link">Learn more ↗</a>
-            </div>
-        </div>
-    </main>
-
-    <!-- ========================================= -->
-    <!-- SELECTED WORKS SECTION                    -->
-    <!-- ========================================= -->
-
-    <section class="works-stack-section" id="work">
-        <div class="works-stack-container">
-
-            <!-- Card 01: SM-ENGINE -->
-            <div class="stack-card card-light" id="card-1">
-                <div class="card-bg-number">01</div>
-                <div class="card-content">
-                    <h2 class="card-title">SM-ENGINE 3D</h2>
-                    <div class="card-desc-wrapper">
-                        <p class="card-desc">A comprehensive and modular 3D modeling editor featuring node-based
-                            workflows, integrated physics simulation, and powerful brush tools. Built for
-                            performance from the first interaction.</p>
-                        <a href="https://github.com/MEDELBOU3/SM-Engine" target="_blank" class="card-link">View
-                            Repository ↗</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 02: AURA STREAM (Green) -->
-            <div class="stack-card card-green" id="card-2">
-                <div class="card-bg-number">02</div>
-                <div class="card-content">
-                    <h2 class="card-title">AURA STREAM</h2>
-                    <!-- Small decorative dot from your design -->
-                    <div class="decorative-dot"></div>
-                    <div class="card-desc-wrapper">
-                        <p class="card-desc">Ready to Explore Your Entertainment? Stop searching, start
-                            experiencing. The AuraStream concept (SM4movies) is a smarter, connected way to discover
-                            content, built with clean and scalable code.</p>
-                        <a href="https://github.com/MEDELBOU3/SM4movies.v2.0.0" target="_blank" class="card-link">View
-                            Repository ↗</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 03: SM4SONG -->
-            <div class="stack-card card-light" id="card-3">
-                <div class="card-bg-number">03</div>
-                <div class="card-content">
-                    <h2 class="card-title">SM4SONG APP</h2>
-                    <div class="card-desc-wrapper">
-                        <p class="card-desc">A music streaming app with deep Spotify API integration. Features genre
-                            collections, advanced search, high-quality player, lyrics, and playlist management
-                            wrapped in a modern UI & UX.</p>
-                        <a href="https://github.com/MEDELBOU3/SM4song" target="_blank" class="card-link">View
-                            Repository ↗</a>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </section>
-    <!-- ========================================= -->
-    <!-- ENGINEERING / GITHUB BENTO SECTION        -->
-    <!-- ========================================= -->
-    <section class="engineering-section" id="engineering">
-        <div class="container engineering-container">
-
-            <div class="section-heading">
-                <div class="split-text">ENGINEERING</div>
-                <div class="split-text text-green" style="margin-left: 10vw;">CORE_</div>
-            </div>
-
-            <div class="bento-grid">
-
-                <!-- Box 1: GitHub Activity Graph (Spans 2 columns) -->
-                <div class="bento-card bento-large github-card bento-reveal">
-                    <div class="bento-header">
-                        <span class="bento-label">Open Source Activity</span>
-                        <a href="https://github.com/MEDELBOU3" target="_blank"
-                            class="magnetic-element bento-link">@MEDELBOU3 ↗</a>
-                    </div>
-                    <div class="graph-container" id="github-graph">
-                        <!-- JS will inject the stylized green squares here -->
-                    </div>
-                </div>
-
-                <!-- Box 2: Quick Stats -->
-                <div class="bento-card stats-card bento-reveal">
-                    <div class="stat-block">
-                        <div class="stat-num counter" data-target="24">0</div>
-                        <div class="stat-label">Public Repositories</div>
-                    </div>
-                    <div class="stat-divider"></div>
-                    <div class="stat-block">
-                        <div class="stat-num counter" data-target="850">0</div>
-                        <div class="stat-label">Yearly Commits +</div>
-                    </div>
-                </div>
-
-                <!-- Box 3: Tech Stack Marquee -->
-                <div class="bento-card tech-card bento-reveal">
-                    <div class="bento-header">
-                        <span class="bento-label">Primary Stack</span>
-                    </div>
-                    <div class="marquee-wrapper">
-                        <div class="marquee-content" id="marquee-1">
-                            <span>React</span><span class="dot"></span>
-                            <span>Three.js</span><span class="dot"></span>
-                            <span>Next.js</span><span class="dot"></span>
-                            <span>GSAP</span><span class="dot"></span>
-                            <span>TypeScript</span><span class="dot"></span>
-                            <span>Tailwind</span><span class="dot"></span>
-                            <!-- Duplicated for infinite scroll -->
-                            <span>React</span><span class="dot"></span>
-                            <span>Three.js</span><span class="dot"></span>
-                            <span>Next.js</span><span class="dot"></span>
-                            <span>GSAP</span><span class="dot"></span>
-                            <span>TypeScript</span><span class="dot"></span>
-                            <span>Tailwind</span><span class="dot"></span>
-                        </div>
-                    </div>
-                    <div class="marquee-wrapper" dir="rtl">
-                        <div class="marquee-content" id="marquee-2">
-                            <span>Node.js</span><span class="dot"></span>
-                            <span>WebGL</span><span class="dot"></span>
-                            <span>Figma</span><span class="dot"></span>
-                            <span>Git</span><span class="dot"></span>
-                            <span>Vercel</span><span class="dot"></span>
-                            <span>HTML/CSS</span><span class="dot"></span>
-                            <!-- Duplicated for infinite scroll -->
-                            <span>Node.js</span><span class="dot"></span>
-                            <span>WebGL</span><span class="dot"></span>
-                            <span>Figma</span><span class="dot"></span>
-                            <span>Git</span><span class="dot"></span>
-                            <span>Vercel</span><span class="dot"></span>
-                            <span>HTML/CSS</span><span class="dot"></span>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
+  <main id="top">
+    <section class="hero" id="hero">
+      <canvas id="fluid-canvas" aria-hidden="true"></canvas>
+      <div class="hero-grid" aria-hidden="true"></div>
+      <div class="hero-meta">
+        <span class="eyebrow hero-kicker">INDEPENDENT CREATIVE DEVELOPER</span>
+        <span class="hero-location"><i class="status-dot"></i> BASED IN MOROCCO <span class="meta-sep">/</span> WORKING WORLDWIDE</span>
+      </div>
+      <div class="hero-title-wrap">
+        <h1 class="hero-title" aria-label="I build what doesn't exist yet">
+          <span class="hero-line"><span class="hero-word">I BUILD</span></span>
+          <span class="hero-line hero-line-middle"><span class="hero-word">WHAT <em>DOESN'T</em></span></span>
+          <span class="hero-line hero-line-last"><span class="hero-word">EXIST <span class="outline-word">YET.</span></span></span>
+        </h1>
+      </div>
+      <div class="hero-bottom">
+        <p class="hero-intro">I’m Mohamed — a computer science student and creative developer exploring the space between <strong>engineering, real-time graphics and digital experiences.</strong></p>
+        <a href="#work" class="scroll-cue magnetic"><span>SCROLL TO EXPLORE</span><b>↓</b></a>
+        <div class="hero-index"><span>PORTFOLIO</span><strong>2026</strong><span>01 — 05</span></div>
+      </div>
+      <div class="hero-side-note">DESIGN WITH INTENT. ENGINEER WITH CURIOSITY.</div>
     </section>
 
-    <!-- ========================================= -->
-    <!-- GAME DEVELOPMENT SECTION                  -->
-    <!-- ========================================= -->
-    <section class="game-dev-section" id="game-dev">
-        <div class="game-container">
-            <div class="section-heading">
-                <div class="split-text">GAME</div>
-                <div class="split-text text-green" style="margin-left: 10vw;">ENGINEERING</div>
-            </div>
-            <div class="engine-showcase">
-                <!-- ENGINE CARDS -->
-                <div class="engine-list">
-                    <div class="engine-item" data-img="https://www.pugetsystems.com/pic_disp.php?id=69892" data-title="UNREAL ENGINE 5"
-                        data-desc="Advanced nanite geometry, lumen lighting, and high-fidelity C++ gameplay systems.">
-                        <span class="engine-num">01</span>
-                        <h3 class="engine-name">UNREAL ENGINE 5</h3>
-                    </div>
-
-                    <div class="engine-item" data-img="https://www.elmundotech.com/wp-content/uploads/2010/09/unity_3_screen_shot_2010-09-21_at_8-32-02_pm.png" data-title="UNITY 3D"
-                        data-desc="Optimized C# architectures, DOTS implementation, and custom shader pipelines.">
-                        <span class="engine-num">02</span>
-                        <h3 class="engine-name">UNITY</h3>
-                    </div>
-
-                    <div class="engine-item active-engine" data-img="https://medelbou3.github.io/SM-Engine/screenshoots/Screenshot%20(1337).png" data-title="SM-ENGINE"
-                        data-desc="My proprietary C++/OpenGL engine. Modular design, node-based workflows, and custom physics solver.">
-                        <span class="engine-num">03</span>
-                        <h3 class="engine-name">SM-ENGINE (CUSTOM)</h3>
-                    </div>
-                </div>
-
-                <!-- DYNAMIC PREVIEW -->
-                <div class="engine-visual">
-                    <div class="visual-frame">
-                        <img id="engine-img" src="https://medelbou3.github.io/SM-Engine/screenshoots/Screenshot%202026-03-23%20001143.png" alt="Engine Preview">
-                        <div class="visual-overlay"></div>
-                    </div>
-                    <p class="engine-desc" id="engine-desc">
-                        My proprietary C++/OpenGL engine. Modular design, node-based workflows, and custom physics
-                        solver.
-                    </p>
-                </div>
-            </div>
-        </div>
+    <section class="intro-strip section-pad">
+      <div class="section-label"><span>01 / THE PRACTICE</span><span>THINK · DESIGN · BUILD</span></div>
+      <div class="intro-copy">
+        <p class="reveal-copy">I like making ambitious ideas <em>real.</em> From browser-based experiences to the architecture of a 3D creation engine, I work across the layers that make digital products feel considered, responsive and alive.</p>
+        <a class="text-link" href="#about">A LITTLE MORE ABOUT ME <span>↗</span></a>
+      </div>
     </section>
 
-    <!-- ========================================= -->
-    <!-- DIGITAL PHILOSOPHY SECTION                -->
-    <!-- ========================================= -->
-    <section class="vision-section" id="philosophy">
-        <div class="vision-image-wrapper">
-            <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200" alt="Professional Workspace" class="vision-parallax-img">
-            <div class="vision-image-overlay"></div>
-        </div>
-        <div class="container vision-container">
-            <div class="vision-content">
-                <span class="ao-label bento-reveal">Philosophy</span>
-                <h2 class="section-heading bento-reveal">STRATEGIC<br><span class="text-green">EXECUTION.</span></h2>
-                <p class="ao-paragraph bento-reveal">
-                    I believe that exceptional digital products are born at the intersection of rigorous engineering and intuitive design. My approach is rooted in building systems that aren't just visually striking, but architecturally sound and performance-optimized.
-                </p>
-                
-                <div class="vision-pillars">
-                    <div class="pillar-item bento-reveal">
-                        <span class="p-num">01</span>
-                        <h4>Scalability</h4>
-                        <p>Writing clean, modular code that grows with the product requirements.</p>
-                    </div>
-                    <div class="pillar-item bento-reveal">
-                        <span class="p-num">02</span>
-                        <h4>Performance</h4>
-                        <p>Optimizing every millisecond to ensure a fluid 60FPS user experience.</p>
-                    </div>
-                    <div class="pillar-item bento-reveal">
-                        <span class="p-num">03</span>
-                        <h4>Integrity</h4>
-                        <p>Detailed documentation and robust testing for long-term reliability.</p>
-                    </div>
+    <section class="work-section section-pad" id="work">
+      <div class="section-heading">
+        <div><span class="eyebrow">02 / SELECTED WORK</span><h2>Things made<br><em>with intent.</em></h2></div>
+        <p class="section-aside">A selection of ongoing experiments and products. Each project is an opportunity to understand a system more deeply.</p>
+      </div>
+
+      <div class="project-list">
+        <article class="project project-featured" data-project="01">
+          <a class="project-visual project-engine" href="https://github.com/MEDELBOU3/SM-Engine" target="_blank" rel="noreferrer" aria-label="Open SM Engine repository">
+            <div class="visual-topline"><span>01 / CREATION SOFTWARE</span><span>2024 — ONGOING</span></div>
+            <div class="engine-art">
+              <div class="engine-window">
+                <div class="engine-window-bar"><span class="window-dots">● ● ●</span><span>SM ENGINE / WORKSPACE</span><span>VIEWPORT 01</span></div>
+                <div class="engine-window-body">
+                  <div class="engine-tool-rail"><i></i><i></i><i></i><i></i><i></i></div>
+                  <div class="engine-view"><div class="engine-axis">X <b>Y</b> Z</div><div class="engine-cube"><span></span></div><div class="engine-view-label">PERSPECTIVE / REALTIME</div></div>
+                  <div class="engine-inspector"><span>OUTLINER</span><i></i><i></i><i></i><span>TRANSFORM</span><i></i><i></i></div>
                 </div>
+                <div class="engine-timeline"><span>TIMELINE</span><i></i><i></i><i></i><i></i><i></i><i></i></div>
+              </div>
+              <div class="engine-stamp">BUILD<br>YOUR<br>WORLD<span>↗</span></div>
             </div>
-        </div>
+            <div class="visual-bottomline"><span>JAVASCRIPT / THREE.JS / ELECTRON</span><span>OPEN PROJECT ↗</span></div>
+          </a>
+          <div class="project-info">
+            <div class="project-number">01</div>
+            <div class="project-title-group"><h3>SM Engine</h3><p>A modular real-time 3D creation and game-development environment.</p></div>
+            <div class="project-tags"><span>CREATIVE SOFTWARE</span><span>REAL-TIME 3D</span><span>DESKTOP</span></div>
+            <a class="project-arrow magnetic" href="https://github.com/MEDELBOU3/SM-Engine" target="_blank" rel="noreferrer" aria-label="Visit SM Engine on GitHub">↗</a>
+          </div>
+          <p class="project-detail">An evolving editor and runtime bringing modeling, animation, gameplay systems, rendering and export workflows into one environment.</p>
+        </article>
+
+        <article class="project project-offset" data-project="02">
+          <a class="project-visual project-aether" href="https://medelbou3.github.io/SM4movies.v2.0.0/" target="_blank" rel="noreferrer" aria-label="Open AuraStream live project">
+            <div class="visual-topline"><span>02 / MEDIA EXPERIENCE</span><span>WEB APPLICATION</span></div>
+            <div class="aether-art">
+              <div class="aether-poster poster-one"><span>THE<br>LAST<br>LIGHT</span><small>ORIGINAL SERIES</small></div>
+              <div class="aether-poster poster-two"><span>AFTER<br>THE<br>HOUR</span><small>NEW RELEASE</small></div>
+              <div class="aether-ui"><div class="aether-ui-top">AURASTREAM <span>DISCOVER&nbsp;&nbsp; FILMS&nbsp;&nbsp; SERIES</span></div><div class="aether-ui-title">Stories worth<br><em>staying for.</em></div><div class="aether-ui-foot">CURATED FOR YOUR NEXT WATCH <b>▶</b></div></div>
+            </div>
+            <div class="visual-bottomline"><span>HTML / CSS / JAVASCRIPT / TMDB / FIREBASE</span><span>LIVE EXPERIENCE ↗</span></div>
+          </a>
+          <div class="project-info">
+            <div class="project-number">02</div>
+            <div class="project-title-group"><h3>AuraStream</h3><p>A media discovery experience built around a streaming-style interface.</p></div>
+            <div class="project-tags"><span>WEB APP</span><span>TMDB API</span><span>FIREBASE</span></div>
+            <a class="project-arrow magnetic" href="https://github.com/MEDELBOU3/SM4movies.v2.0.0" target="_blank" rel="noreferrer" aria-label="Visit AuraStream on GitHub">↗</a>
+          </div>
+          <p class="project-detail">A client-side media platform exploring discovery, watchlists, user-specific data and connected entertainment features.</p>
+        </article>
+
+        <article class="project project-third" data-project="03">
+          <a class="project-visual project-cinema" href="https://medelbou3.github.io/smcinema/" target="_blank" rel="noreferrer" aria-label="Open SMCinema">
+            <div class="visual-topline"><span>03 / CONTENT PLATFORM</span><span>2024 — 2026</span></div>
+            <div class="cinema-art">
+              <div class="cinema-poster c-poster-a"><span>NO<br>RETURN</span><small>THRILLER / 2026</small></div>
+              <div class="cinema-poster c-poster-b"><span>BLUE<br>HORIZON</span><small>DRAMA / 2025</small></div>
+              <div class="cinema-poster c-poster-c"><span>THE<br>ORBIT</span><small>SCI-FI / 2026</small></div>
+              <div class="cinema-caption"><span>SM CINEMA</span><strong>FIND YOUR<br>NEXT STORY.</strong><small>FILMS · SERIES · ANIME · LIVE CHANNELS</small></div>
+            </div>
+            <div class="visual-bottomline"><span>HTML / CSS / JAVASCRIPT / TMDB</span><span>LIVE EXPERIENCE ↗</span></div>
+          </a>
+          <div class="project-info">
+            <div class="project-number">03</div>
+            <div class="project-title-group"><h3>SMCinema</h3><p>A broad entertainment interface for films, series, anime and channels.</p></div>
+            <div class="project-tags"><span>CONTENT PLATFORM</span><span>API INTEGRATION</span></div>
+            <a class="project-arrow magnetic" href="https://github.com/MEDELBOU3/smcinema" target="_blank" rel="noreferrer" aria-label="Visit SMCinema on GitHub">↗</a>
+          </div>
+          <p class="project-detail">A content-rich web experience using TMDB metadata, category browsing, search, recommendations and responsive layouts.</p>
+        </article>
+
+        <article class="project project-offset project-fourth" data-project="04">
+          <a class="project-visual project-motion" href="https://github.com/MEDELBOU3/Motion-Capture-Animation-System" target="_blank" rel="noreferrer" aria-label="Open motion capture system repository">
+            <div class="visual-topline"><span>04 / TECHNICAL EXPERIMENT</span><span>ANIMATION SYSTEMS</span></div>
+            <div class="motion-art">
+              <div class="motion-grid"></div>
+              <div class="motion-skeleton"><i class="joint j1"></i><i class="joint j2"></i><i class="joint j3"></i><i class="joint j4"></i><i class="joint j5"></i><i class="joint j6"></i><i class="joint j7"></i><i class="joint j8"></i><i class="joint j9"></i><i class="joint j10"></i><i class="joint j11"></i><i class="joint j12"></i></div>
+              <div class="motion-readout"><span>CAPTURE SESSION / 001</span><strong>MOTION<br>IN DATA.</strong><small>POSE · TRACK · ANALYZE</small></div>
+            </div>
+            <div class="visual-bottomline"><span>ANIMATION / INTERACTIVE SYSTEMS</span><span>VIEW REPOSITORY ↗</span></div>
+          </a>
+          <div class="project-info">
+            <div class="project-number">04</div>
+            <div class="project-title-group"><h3>Motion Capture System</h3><p>A technical exploration of motion capture and animation workflows.</p></div>
+            <div class="project-tags"><span>RESEARCH</span><span>ANIMATION</span></div>
+            <a class="project-arrow magnetic" href="https://github.com/MEDELBOU3/Motion-Capture-Animation-System" target="_blank" rel="noreferrer" aria-label="Visit motion capture repository">↗</a>
+          </div>
+          <p class="project-detail">A focused experiment in connecting movement data with digital character and animation workflows.</p>
+        </article>
+      </div>
+      <div class="all-work"><span>MORE EXPERIMENTS, CODE & NOTES</span><a href="https://github.com/MEDELBOU3?tab=repositories" target="_blank" rel="noreferrer">EXPLORE ALL REPOSITORIES <b>↗</b></a></div>
     </section>
 
-    <!-- ========================================= -->
-    <!-- ZOOM TRANSITION SECTION                   -->
-    <!-- ========================================= -->
-    <section class="zoom-section" id="zoom-transition">
-        <div class="zoom-sticky">
-            <!-- Background Vertical Grid matching the image -->
-            <div class="zoom-grid">
-                <div class="z-line"></div>
-                <div class="z-line"></div>
-                <div class="z-line"></div>
-                <div class="z-line"></div>
-                <div class="z-line"></div>
-                <div class="z-line"></div>
-                <div class="z-line"></div>
-                <div class="z-line"></div>
-            </div>
 
-            <!-- The massive text container that we will scale -->
-            <div class="zoom-text-wrapper">
-                <h2 class="massive-zoom-text">
-                    QUALITY <span class="zoom-center-target">+</span> PERFORMANCE
-                </h2>
-
-                <!-- The decorative dot from your image -->
-                <div class="decorative-circle">
-                    <div class="inner-dot"></div>
-                </div>
-            </div>
-
-            <!-- A pure white overlay to ensure a seamless transition at maximum scale -->
-            <div class="white-flash-overlay"></div>
-        </div>
+    <section class="lab-section section-pad" id="lab">
+      <div class="section-label"><span>03 / CURRENT FOCUSES</span><span>RESEARCH · SYSTEMS · EXPERIMENTS</span></div>
+      <div class="lab-heading lab-heading-editorial">
+        <div><span class="eyebrow">WHAT I KEEP EXPLORING</span><h2>Ideas worth<br><em>working on.</em></h2></div>
+        <p>I’m drawn to problems that sit between theory and implementation — understanding how a system works, then building a version of it that can be tested, experienced and improved.</p>
+      </div>
+      <div class="lab-index" aria-label="Current technical interests">
+        <a class="lab-row" href="https://github.com/MEDELBOU3/SM-Engine" target="_blank" rel="noreferrer">
+          <span class="lab-row-number">01</span><span class="lab-row-title">Real-time 3D systems</span><span class="lab-row-description">Engine architecture, rendering, physics, terrain and creative tooling.</span><span class="lab-row-tags">SM ENGINE · WEBGL</span><span class="lab-row-arrow">↗</span>
+        </a>
+        <a class="lab-row" href="https://github.com/MEDELBOU3/Motion-Capture-Animation-System" target="_blank" rel="noreferrer">
+          <span class="lab-row-number">02</span><span class="lab-row-title">Animation & movement</span><span class="lab-row-description">Character systems, motion data and the relationship between movement and digital scenes.</span><span class="lab-row-tags">MOTION · ANIMATION</span><span class="lab-row-arrow">↗</span>
+        </a>
+        <a class="lab-row" href="https://github.com/MEDELBOU3" target="_blank" rel="noreferrer">
+          <span class="lab-row-number">03</span><span class="lab-row-title">Algorithms & AI</span><span class="lab-row-description">Exploring computational ideas through prototypes, experiments and measurable results.</span><span class="lab-row-tags">COMPUTER SCIENCE · AI</span><span class="lab-row-arrow">↗</span>
+        </a>
+        <a class="lab-row" href="https://github.com/MEDELBOU3" target="_blank" rel="noreferrer">
+          <span class="lab-row-number">04</span><span class="lab-row-title">Interfaces & digital products</span><span class="lab-row-description">Building useful applications with thoughtful interaction, structure and visual clarity.</span><span class="lab-row-tags">WEB · PRODUCT DESIGN</span><span class="lab-row-arrow">↗</span>
+        </a>
+      </div>
+      <div class="lab-index-footer"><span>ONGOING, NEVER FINISHED</span><a href="https://github.com/MEDELBOU3?tab=repositories" target="_blank" rel="noreferrer">FOLLOW THE WORK ON GITHUB ↗</a></div>
     </section>
 
-    <!-- ========================================= -->
-    <!-- REVEALED FOOTER SECTION (White Background)-->
-    <!-- ========================================= -->
+    <section class="approach-section section-pad" id="approach">
+      <div class="section-label"><span>04 / HOW I THINK</span><span>ENGINEERING × EXPRESSION</span></div>
+      <div class="approach-heading"><h2 class="reveal-heading">Curiosity is<br>the <em>starting point.</em></h2><p>I’m interested in what happens when visual thinking meets technical depth — when an interface becomes a tool, an idea becomes a system, and a system becomes something people can use.</p></div>
+      <div class="discipline-grid">
+        <div class="discipline"><span>01</span><h3>Creative<br>Development</h3><p>Interactive websites, motion systems, visual storytelling and experiences that respond to people.</p><div class="discipline-line"></div></div>
+        <div class="discipline"><span>02</span><h3>Real-time<br>3D & Graphics</h3><p>Three.js, WebGL, rendering experiments, spatial interfaces and tools for making in 3D.</p><div class="discipline-line"></div></div>
+        <div class="discipline"><span>03</span><h3>Software<br>Architecture</h3><p>Modular systems, runtime design, performance thinking and engineering for complex products.</p><div class="discipline-line"></div></div>
+        <div class="discipline"><span>04</span><h3>AI &<br>Exploration</h3><p>Computer science, algorithms and applied experiments driven by questions worth investigating.</p><div class="discipline-line"></div></div>
+      </div>
+      <div class="stack-line"><span>TOOLS I WORK WITH</span><div class="stack-marquee"><div class="stack-track"><span>JAVASCRIPT</span><i>✳</i><span>THREE.JS</span><i>✳</i><span>WEBGL</span><i>✳</i><span>GSAP</span><i>✳</i><span>ELECTRON</span><i>✳</i><span>PYTHON</span><i>✳</i><span>C++</span><i>✳</i><span>HTML / CSS</span><i>✳</i><span>JAVASCRIPT</span><i>✳</i><span>THREE.JS</span><i>✳</i><span>WEBGL</span><i>✳</i><span>GSAP</span><i>✳</i><span>ELECTRON</span><i>✳</i><span>PYTHON</span><i>✳</i><span>C++</span><i>✳</i><span>HTML / CSS</span><i>✳</i></div></div></div>
+    </section>
+
+    <section class="about-section section-pad" id="about">
+      <div class="section-label"><span>05 / THE PERSON</span><span>BEYOND THE SCREEN</span></div>
+      <div class="about-layout">
+        <div class="about-title"><span class="eyebrow">A NOTE ABOUT ME</span><h2>Always<br>building.<br><em>Always looking.</em></h2></div>
+        <div class="about-body">
+          <p class="about-lead">I’m Mohamed El Bouanani, a computer science and artificial intelligence student from Morocco.</p>
+          <p>I enjoy creating things from the ground up and understanding how complex systems work internally. My interests move between game-engine architecture, real-time graphics, animation, web applications, algorithms and interface design.</p>
+          <p>Outside the code, I’m drawn to photography and graphic design — and to the visual language of architecture, machines, landscapes and cinema. I’m also fascinated by Formula 1 engineering and would love to explore Japan one day.</p>
+          <div class="about-signoff"><span>KEEP MAKING<br>THINGS THAT MATTER.</span><span class="signature">Mohamed.</span></div>
+        </div>
+      </div>
+    </section>
+
     <section class="contact-section" id="contact">
-        <!-- Inverted faint grid for the white background -->
-        <div class="footer-grid">
-            <div class="f-line"></div>
-            <div class="f-line"></div>
-            <div class="f-line"></div>
-            <div class="f-line"></div>
-            <div class="f-line"></div>
-            <div class="f-line"></div>
-            <div class="f-line"></div>
-            <div class="f-line"></div>
-        </div>
-
-        <!-- Top Info Bar -->
-        <div class="contact-top">
-            <div class="contact-info footer-fade-up">
-                <span class="info-label">Local Time</span>
-                <span class="info-value" id="local-time">00:00:00 AM</span>
-            </div>
-            <div class="contact-info footer-fade-up">
-                <span class="info-label">Availability</span>
-                <span class="info-value">Accepting new projects<br>for late 2026</span>
-            </div>
-            <div class="contact-info footer-fade-up">
-                <span class="info-label">Socials</span>
-                <div class="social-links">
-                    <a href="https://github.com/MEDELBOU3" target="_blank" class="magnetic-element">GitHub</a>
-                    <a href="https://www.linkedin.com/in/elbou-simo-644820282/" class="magnetic-element">LinkedIn</a>
-                    <a href="https://x.com/Simo_Elbou3" class="magnetic-element">Twitter</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Center Massive CTA -->
-        <div class="contact-center">
-            <h2 class="contact-title">LET'S WORK</h2>
-            <!-- Magnetic Pill Button -->
-            <div class="footer-fade-up">
-                <a href="mailto:mohamed.elbouanani.fpn23@ump.ac.ma"
-                    class="massive-email magnetic-element">mohamed.elbouanani.fpn23@ump.ac.ma</a>
-            </div>
-        </div>
-
-        <!-- Bottom Copyright & Back to Top -->
-        <div class="contact-bottom footer-fade-up">
-            <span>© 2026 Med Elbou.</span>
-            <span>Frontend Web Developer.</span>
-            <span class="back-to-top magnetic-element" id="back-to-top">Back to top ↑</span>
-        </div>
+      <div class="contact-top"><span class="eyebrow">06 / HAVE SOMETHING IN MIND?</span><span class="contact-location">MOROCCO · OPEN TO THE WORLD</span></div>
+      <h2>Let's make<br><em>it matter.</em></h2>
+      <a class="contact-mail magnetic" href="mailto:simo.elb.2005@gmail.com"><span>simo.elb.2005@gmail.com</span><b>↗</b></a>
+      <div class="contact-bottom">
+        <div class="contact-socials" aria-label="Social media links"><a href="https://github.com/MEDELBOU3" target="_blank" rel="me noopener noreferrer">GITHUB ↗</a><a href="https://www.facebook.com/Simo.lbou3" target="_blank" rel="me noopener noreferrer">FACEBOOK ↗</a><a href="https://www.instagram.com/simo_elb_3/" target="_blank" rel="me noopener noreferrer">INSTAGRAM ↗</a><a href="https://www.youtube.com/@digitalvortex203" target="_blank" rel="me noopener noreferrer">YOUTUBE ↗</a><a href="https://x.com/Simo_Elbou3" target="_blank" rel="me noopener noreferrer">X ↗</a></div>
+        <span class="footer-note">DESIGNED & BUILT WITH INTENTION.</span>
+        <a class="back-top" href="#top">BACK TO TOP ↑</a>
+      </div>
     </section>
+  </main>
 
-    <!-- Bottom Visible Grid Overlay -->
-    <div class="bottom-grid">
-        <div class="grid-box"></div>
-        <div class="grid-box"></div>
-        <div class="grid-box"></div>
-        <div class="grid-box"></div>
-        <div class="grid-box"></div>
-        <div class="grid-box"></div>
-        <div class="grid-box"></div>
-        <div class="grid-box"></div>
-    </div>
-
-
-    <!-- ========================================= -->
-    <!-- FULL SCREEN OVERLAY MENU                  -->
-    <!-- ========================================= -->
-    <div class="menu-overlay">
-        <!-- Wavy background for menu -->
-        <div class="bg-overlay" style="opacity: 0.3;"></div>
-
-        <div class="menu-container">
-            <!-- Menu Header -->
-            <header class="menu-header">
-                <div class="logo">MED</div>
-                <button class="magnetic-element menu-btn" id="menu-close">
-                    CLOSE <div class="menu-dot" style="background: #ff3366;"></div>
-                </button>
-            </header>
-
-            <!-- Massive Menu Links -->
-            <nav class="menu-nav">
-                <div class="menu-link-wrapper">
-                    <a href="#" class="menu-link"><span class="menu-num">01</span> HOME</a>
-                </div>
-                <div class="menu-link-wrapper">
-                    <a href="#" class="menu-link" id="nav-work-link"><span class="menu-num">02</span> WORK</a>
-                </div>
-                <div class="menu-link-wrapper">
-                    <a href="#" class="menu-link" id="nav-about-link"><span class="menu-num">03</span> ABOUT</a>
-                </div>
-                <div class="menu-link-wrapper">
-                    <!-- Notice the ID: nav-process-link -->
-                    <a href="#" class="menu-link" id="nav-process-link"><span class="menu-num">04</span> SERVICES</a>
-                </div>
-            </nav>
-
-            <!-- Menu Footer / Info -->
-            <div class="menu-footer">
-                <div class="menu-info-block fade-menu-info">
-                    <span class="info-title">Socials</span>
-                    <a href="https://github.com/MEDELBOU3" target="_blank">GitHub ↗</a>
-                    <a href="#">LinkedIn ↗</a>
-                    <a href="#">Twitter ↗</a>
-                </div>
-                <div class="menu-info-block fade-menu-info">
-                    <span class="info-title">Say Hello</span>
-                    <a href="mailto:mohamed.elbouanani.fpn23@ump.ac.ma">mohamed.elbouanani.fpn23@ump.ac.ma</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ========================================= -->
-    <!-- HIGH-IMPACT WORK OVERLAY (CHKSTEPAN STYLE)-->
-    <!-- ========================================= -->
-    <div class="work-overlay" id="work-overlay">
-
-        <!-- Overlay Grid Background -->
-        <div class="overlay-grid">
-            <div class="o-line"></div>
-            <div class="o-line"></div>
-            <div class="o-line"></div>
-            <div class="o-line"></div>
-            <div class="o-line"></div>
-            <div class="o-line"></div>
-            <div class="o-line"></div>
-            <div class="o-line"></div>
-        </div>
-
-        <!-- Header -->
-        <!-- The Header -->
-        <header class="work-overlay-header">
-            <div class="logo">MED</div>
-
-            <!-- Video Navigation (Add your YouTube IDs here) -->
-            <div class="video-list">
-                <!-- Replace 'dQw4w9WgXcQ' with your actual YouTube video IDs -->
-                <span class="video-item" data-yt="zepyWyzPxOQ">01</span>
-                <span class="video-item" data-yt="bE_A5kopyWw">02</span>
-                <span class="video-item" data-yt="DaspflqqOyM">03</span>
-            </div>
-
-            <button class="magnetic-element menu-btn" id="close-work-btn">
-                CLOSE <div class="menu-dot" style="background: #ff3366;"></div>
-            </button>
-        </header>
-
-
-
-        <!-- Scrollable Content Container -->
-        <div class="work-overlay-scroll" data-lenis-prevent>
-
-            <!-- Massive Intro Typography -->
-            <div class="wo-intro">
-                <div class="wo-meta">
-                    <span>Crafted Projects</span>
-                    <span>( 03 )</span>
-                </div>
-                <h2 class="wo-massive-title">
-                    <div class="wo-title-line"><span class="wo-text">WANT TO SEE</span></div>
-                    <div class="wo-title-line right-align"><span class="wo-text text-outline">WHAT I'VE BUILT?</span>
-                    </div>
-                </h2>
-            </div>
-
-            <!-- The Massive List Accordion -->
-            <div class="wo-list-container">
-                <!-- Replace 'src' with actual images of your projects -->
-
-                <a href="https://github.com/MEDELBOU3/SM-Engine" target="_blank" class="wo-list-item"
-                    data-img="https://medelbou3.github.io/SM-Engine/screenshoots/Screenshot%20(1337).png">
-                    <h3 class="wo-item-title">SM-ENGINE 3D</h3>
-                    <span class="wo-item-year">2024</span>
-                </a>
-
-                <a href="https://github.com/MEDELBOU3/SM4movies.v2.0.0" target="_blank" class="wo-list-item"
-                    data-img="https://github.com/MEDELBOU3/SM4movies.v2.0.0/blob/main/images/interface.png?raw=true">
-                    <h3 class="wo-item-title">AURA STREAM</h3>
-                    <span class="wo-item-year">2025</span>
-                </a>
-
-                <a href="https://github.com/MEDELBOU3/SM4song" target="_blank" class="wo-list-item"
-                    data-img="https://github.com/MEDELBOU3/SM4song/raw/main/brandmark.png">
-                    <h3 class="wo-item-title">SM4SONG APP</h3>
-                    <span class="wo-item-year">2026</span>
-                </a>
-
-            </div>
-
-            <!-- Massive Footer inside overlay -->
-            <div class="wo-footer">
-                <h1 class="wo-massive-name">MED ELBOU.</h1>
-            </div>
-        </div>
-
-        <!-- Floating Image Element (Follows cursor) -->
-        <div class="wo-floating-img">
-            <img src="" alt="Project Preview" id="wo-float-img">
-        </div>
-    </div>
-
-    <!-- ========================================= -->
-    <!-- PROFESSIONAL ABOUT OVERLAY                -->
-    <!-- ========================================= -->
-    <div class="about-overlay" id="about-overlay">
-        <div class="overlay-grid">
-            <div class="o-line"></div>
-            <div class="o-line"></div>
-            <div class="o-line"></div>
-            <div class="o-line"></div>
-            <div class="o-line"></div>
-            <div class="o-line"></div>
-            <div class="o-line"></div>
-            <div class="o-line"></div>
-        </div>
-
-        <header class="about-overlay-header">
-            <div class="logo">MED</div>
-            <button class="magnetic-element menu-btn" id="close-about-btn">
-                CLOSE <div class="menu-dot" style="background: #ff3366;"></div>
-            </button>
-        </header>
-
-        <div class="about-overlay-scroll" data-lenis-prevent>
-            <div class="ao-container">
-                <section class="ao-hero">
-                    <div class="ao-meta"><span>Philosophy & Vision</span><span>( 01 )</span></div>
-                    <h2 class="ao-massive-title">
-                        <div class="ao-title-line"><span class="ao-text">CRAFTING DIGITAL</span></div>
-                        <div class="ao-title-line right-align"><span class="ao-text text-outline">EXPERIENCES</span>
-                        </div>
-                    </h2>
-                </section>
-
-                <section class="ao-details-grid">
-                    <div class="ao-bio">
-                        <span class="ao-label">Biography</span>
-                        <p class="ao-paragraph">
-                            I'm Mohamed El-bouanani, a Creative Developer based in Morocco. I bridge the gap between
-                            complex engineering and aesthetic design. My work is defined by high-performance logic
-                            wrapped in immersive 3D interfaces.
-                        </p>
-                        <p class="ao-paragraph">
-                            Specializing in WebGL and the Three.js ecosystem, I focus on building websites that don't
-                            just provide information, but tell a story through motion and interaction.
-                        </p>
-                    </div>
-
-                    <div class="ao-expertise">
-                        <span class="ao-label">Core Expertise</span>
-                        <ul class="ao-list">
-                            <li>Creative Frontend Architecture</li>
-                            <li>3D WebGL Environments</li>
-                            <li>Interactive Motion Design</li>
-                            <li>Performance Optimization</li>
-                            <li>Full-stack Survival Mechanics</li>
-                        </ul>
-                    </div>
-                </section>
-
-                <section class="ao-values">
-                    <div class="ao-value-item">
-                        <span class="ao-v-num">01.</span>
-                        <h4 class="ao-v-title">PURPOSE</h4>
-                        <p>Every line of code should serve the user experience, making digital interaction feel natural
-                            and rewarding.</p>
-                    </div>
-                    <div class="ao-value-item">
-                        <span class="ao-v-num">02.</span>
-                        <h4 class="ao-v-title">PRECISION</h4>
-                        <p>Performance isn't an afterthought. I optimize for the millisecond to ensure 60FPS fluid
-                            motion on any device.</p>
-                    </div>
-                    <div class="ao-value-item">
-                        <span class="ao-v-num">03.</span>
-                        <h4 class="ao-v-title">EVOLUTION</h4>
-                        <p>Technological landscapes change daily. My stack is built on curiosity and the constant
-                            pursuit of modern standards.</p>
-                    </div>
-                </section>
-
-                <div class="ao-footer">
-                    <h1 class="ao-massive-name">M. ELBOUANANI</h1>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="process-overlay" id="process-overlay">
-        <header class="process-header">
-            <div class="logo">MED<span class="dot">.</span></div>
-            <button class="magnetic-element menu-btn" id="close-process-btn">
-                <span class="btn-text">Close Menu</span>
-                <div class="menu-dot"></div>
-            </button>
-        </header>
-
-        <div class="process-container">
-            <div class="process-list">
-                <!-- Added a secondary label for a "professional/tech" feel -->
-                <div class="p-item"
-                    data-desc="Immersive, high-fidelity interactive environments built with WebGL and Three.js.">
-                    <span class="p-num">01</span>
-                    <h2 class="p-title">3D Web Engineering</h2>
-                    <div class="p-indicator"></div>
-                </div>
-
-                <div class="p-item"
-                    data-desc="Sophisticated physics-based motion design that bridges digital and physical interaction.">
-                    <span class="p-num">02</span>
-                    <h2 class="p-title">Motion Synthesis</h2>
-                    <div class="p-indicator"></div>
-                </div>
-
-                <div class="p-item"
-                    data-desc="Scalable, high-performance frontend architecture optimized for growth and stability.">
-                    <span class="p-num">03</span>
-                    <h2 class="p-title">System Architecture</h2>
-                    <div class="p-indicator"></div>
-                </div>
-            </div>
-
-            <div class="p-info-box">
-                <span class="info-label">Service Methodology</span>
-                <p class="p-desc" id="p-desc">Select a capability to review technical core competencies.</p>
-            </div>
-        </div>
-    </div>
-    <div class="wo-video-modal" id="wo-video-modal">
-        <!-- Clicking the background closes the video -->
-        <div class="wo-video-backdrop" id="wo-video-close-bg"></div>
-
-        <div class="wo-video-wrapper">
-            <button class="wo-video-close-btn" id="wo-video-close-btn">×</button>
-            <div class="wo-video-container" id="wo-iframe-container">
-                <!-- JS will dynamically inject the YouTube iframe here -->
-            </div>
-        </div>
-    </div>
-
-
-    <!-- Scripts: GSAP & SplitType -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://unpkg.com/split-type"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="https://unpkg.com/@studio-freight/lenis@1.0.34/dist/lenis.min.js"></script>
-    <!-- Three.js CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <!-- Custom JS loaded as a module -->
-    <script type="module" src="main.js"></script>
-    <script>
-        lucide.createIcons();
-    </script>
+  <script src="main.js" defer></script>
 </body>
-
 </html>
