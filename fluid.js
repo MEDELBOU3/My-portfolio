@@ -21,7 +21,7 @@ export const initFluid = () => {
     });
     renderer.setClearColor(0x000000, 0); // Clear to transparent
     renderer.setSize(W, H);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2.0));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, window.innerWidth < 768 ? 1 : 1.35));
     renderer.autoClear = false;
 
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
@@ -224,7 +224,7 @@ export const initFluid = () => {
     });
 
     // Inside fluid.js, find the displayMat declaration:
-    const displayMat = new THREE.ShaderMaterial({
+    displayMat = new THREE.ShaderMaterial({
 
         uniforms: {
             tDye: { value: null },
